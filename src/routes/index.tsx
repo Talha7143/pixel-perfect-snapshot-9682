@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  ArrowDownRight,
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
@@ -14,10 +13,8 @@ import {
   CircleHelp,
   Clapperboard,
   Clock3,
-  Command,
   Film,
   Globe2,
-  Headphones,
   Layers3,
   Menu,
   MessageSquareText,
@@ -30,7 +27,6 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
-  Subtitles,
   TrendingUp,
   Upload,
   WandSparkles,
@@ -39,14 +35,15 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { marketingPlans } from "@/lib/marketing-plans";
 import studioImage from "@/assets/creator-studio-campaign.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "White Glove Content — Your channel, on autopilot" },
+      { title: "Studvi — Your channel, on autopilot" },
       { name: "description", content: "Script, produce, and publish short-form video across every channel. Your faceless content operation, finally running itself." },
-      { property: "og:title", content: "White Glove Content — Your channel, on autopilot" },
+      { property: "og:title", content: "Studvi — Your channel, on autopilot" },
       { property: "og:description", content: "Script, produce, and publish short-form video across every channel." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -61,12 +58,6 @@ const features = [
   { icon: Scissors, number: "03", title: "Every frame, figured out.", description: "Matched footage, kinetic captions, and polished transitions. The edit just happens." },
   { icon: WandSparkles, number: "04", title: "A thumbnail worth stopping for.", description: "On-brand, bold visual hooks designed to make the next scroll a click." },
   { icon: Radio, number: "05", title: "One idea. Everywhere.", description: "Schedule the finished cut across TikTok, Reels, Shorts, and X, all in one place." },
-];
-
-const plans = [
-  { name: "Starter", monthly: 54, annual: 43, description: "Your channel, in motion.", videos: "30 videos / month", channels: "1 automated channel", extras: ["Essential voice library", "Automatic publishing", "Standard video styles"] },
-  { name: "Growth Pro", monthly: 149, annual: 119, description: "More channels. More momentum.", videos: "90 videos / month", channels: "3 automated channels", extras: ["Expanded voice library", "Custom brand styling", "Advanced captions"] },
-  { name: "Agency", monthly: 499, annual: 399, description: "Your whole roster, on autopilot.", videos: "Unlimited potential", channels: "10+ client workspaces", extras: ["White-label client portal", "Custom domain support", "Priority production"] },
 ];
 
 const faqs = [
