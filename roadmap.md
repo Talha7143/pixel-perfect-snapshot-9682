@@ -5,4 +5,5 @@
 - [x] Define the site-wide design tokens and app-specific page metadata.
 - [x] Restore the missing pricing plan data and verify the home page renders.
 - [ ] Add the requested Studvi sign-in and sign-up page with Google, Apple, and email options.
-- [ ] Run routing and pricing checks, then verify sign-in navigation and preview status.
+- [x] Run routing and pricing checks; verify the homepage renders in preview.
+- [ ] Verify sign-in navigation after the Studvi authentication page is implemented.
