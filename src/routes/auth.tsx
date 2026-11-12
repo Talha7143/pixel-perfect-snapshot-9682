@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "signup" ? "signup" : "signin",
+  }),
   head: () => ({
     meta: [
       { title: "Sign in or sign up — Studvi" },
@@ -23,7 +26,8 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const { mode: initialMode } = Route.useSearch();
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -52,7 +56,6 @@ function AuthPage() {
           setNotice("Check your email for a confirmation link. Your account will be ready after you confirm your address.");
           return;
         }
-        await supabase.from("profiles").upsert({ user_id: data.user.id, display_name: displayName.trim() });
         await navigate({ to: "/", replace: true });
         return;
       }
@@ -110,11 +113,11 @@ function AuthPage() {
           <p className="mt-2 text-sm text-muted-foreground">{mode === "signin" ? "Sign in to continue to your workspace." : "Create an account to build your workspace."}</p>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
-            <Button type="button" variant="outline" disabled={busy} onClick={() => void signInWithProvider("google")} className="h-11 rounded-sm border-border bg-background text-foreground hover:bg-accent">
+            <Button type="button" variant="outline" disabled={busy} onClick={() => void signInWithProvider("google")} className="h-11 rounded-sm border-border bg-foreground px-2 text-[11px] text-background hover:bg-foreground/90 sm:px-3 sm:text-xs">
               <GoogleGlyph /> Continue with Google
             </Button>
-            <Button type="button" disabled={busy} onClick={() => void signInWithProvider("apple")} className="h-11 rounded-sm bg-foreground text-background hover:bg-foreground/90">
-              <AppleGlyph /> Continue with Apple
+            <Button type="button" disabled={busy} onClick={() => void signInWithProvider("apple")} className="h-11 rounded-sm bg-foreground px-2 text-[11px] text-background hover:bg-foreground/90 sm:px-3 sm:text-xs">
+              Continue with Apple
             </Button>
           </div>
 
@@ -123,7 +126,7 @@ function AuthPage() {
           <form onSubmit={submit} className="space-y-4">
             {mode === "signup" && <div className="space-y-2"><Label htmlFor="display-name" className="text-xs text-faint">Display name</Label><Input id="display-name" autoComplete="name" required value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="Your name" disabled={busy} className="h-11 rounded-sm border-border bg-background text-sm" /></div>}
             <div className="space-y-2"><Label htmlFor="email" className="text-xs text-faint">Email address</Label><div className="relative"><Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" disabled={busy} className="h-11 rounded-sm border-border bg-background pl-10 text-sm" /></div></div>
-            <div className="space-y-2"><Label htmlFor="password" className="text-xs text-faint">Password</Label><div className="relative"><LockKeyhole className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input id="password" type={showPassword ? "text" : "password"} autoComplete={mode === "signin" ? "current-password" : "new-password"} required minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" disabled={busy} className="h-11 rounded-sm border-border bg-background pl-10 pr-10 text-sm" /><Button type="button" variant="ghost" size="icon" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword((shown) => !shown)} className="absolute right-1 top-1/2 size-9 -translate-y-1/2 text-muted-foreground"><span className="sr-only">{showPassword ? <EyeOff /> : <Eye />}</span>{showPassword ? <EyeOff /> : <Eye />}</Button></div></div>
+            <div className="space-y-2"><Label htmlFor="password" className="text-xs text-faint">Password</Label><div className="relative"><LockKeyhole className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input id="password" type={showPassword ? "text" : "password"} autoComplete={mode === "signin" ? "current-password" : "new-password"} required minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" disabled={busy} className="h-11 rounded-sm border-border bg-background pl-10 pr-10 text-sm" /><Button type="button" variant="ghost" size="icon" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword((shown) => !shown)} className="absolute right-1 top-1/2 size-9 -translate-y-1/2 text-muted-foreground">{showPassword ? <EyeOff /> : <Eye />}</Button></div></div>
             {error && <p role="alert" className="text-xs leading-5 text-destructive">{error}</p>}
             {notice && <p role="status" className="border border-neon/20 bg-neon/5 p-3 text-xs leading-5 text-faint">{notice}</p>}
             <Button type="submit" disabled={busy} className="h-11 w-full rounded-sm bg-primary text-primary-foreground">{busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}</Button>
@@ -142,8 +145,4 @@ function AuthPage() {
 
 function GoogleGlyph() {
   return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px] shrink-0"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>;
-}
-
-function AppleGlyph() {
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px] shrink-0 fill-current"><path d="M16.37 12.32c.02 2.12 1.86 2.82 1.88 2.83-.02.05-.29 1-.96 1.98-.58.85-1.19 1.7-2.15 1.72-.94.02-1.25-.55-2.33-.55s-1.43.53-2.29.57c-.91.03-1.61-.92-2.2-1.77-1.2-1.73-2.12-4.9-.89-7.04.61-1.06 1.7-1.73 2.89-1.75.9-.02 1.76.61 2.32.61.55 0 1.58-.76 2.66-.65.45.02 1.72.18 2.54 1.38-.07.04-1.52.89-1.5 2.67ZM14.65 6.98c.49-.59.81-1.41.72-2.23-.7.03-1.55.47-2.06 1.05-.45.52-.84 1.35-.73 2.15.78.06 1.58-.4 2.07-.97Z"/></svg>;
 }
