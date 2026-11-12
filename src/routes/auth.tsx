@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>) => ({
-    mode: search.mode === "signup" ? "signup" : "signin",
+    mode: search.mode === "signup" ? ("signup" as const) : ("signin" as const),
   }),
   head: () => ({
     meta: [
