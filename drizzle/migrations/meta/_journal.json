@@ -8,6 +8,13 @@
       "when": 1794385553256,
       "tag": "0000_create_user_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794498185066,
+      "tag": "0001_sync_social_profile_names",
+      "breakpoints": true
     }
   ]
 }
