@@ -31,3 +31,4 @@ use the editor.
 
 ## Project conventions
 - Keep marketing-page plan details in the typed `src/lib/marketing-plans.ts` module so pricing cards and checks share one source of truth.
+- Keep sign-in and sign-up on a public top-level TanStack route so OAuth can return to an accessible callback page.
